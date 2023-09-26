@@ -55,8 +55,10 @@ static void huffman_create_nodes(huffman_node_t** nodes_array, uint32_t* hist) {
 }
 
 static int huffman_cmp_freq(const void *a, const void *b) {
+    if (a == NULL || b == NULL) utils_fatal_error("huffman_cmp_freq() failed");
     const huffman_node_t *node1 = *(const huffman_node_t **)a;
     const huffman_node_t *node2 = *(const huffman_node_t **)b;
+    if (node1 == NULL || node2 == NULL) utils_fatal_error("huffman_cmp_freq() failed 2");
     if (node1->freq < node2->freq) return -1;
     if (node1->freq > node2->freq) return 1;
     return 0;
@@ -380,7 +382,7 @@ static uint8_t* huffman_decompress_data(huffman_header_t* header, huffman_node_t
     uint32_t decoded = 0;
     while (decoded < header->orig_size) {
         huffman_node_t* node = root;
-        while (!is_leaf(node)) {
+        while (node != NULL && !is_leaf(node)) {
             if (bits_read_bit_at(bs, bit_index++))
                 node = node->right;
             else
@@ -394,7 +396,7 @@ static uint8_t* huffman_decompress_data(huffman_header_t* header, huffman_node_t
     return data;
 }
 
-uint8_t* huffman_decompress(uint8_t* cdata, size_t* write_size) {
+uint8_t* huffman_decompress(uint8_t* cdata, size_t cdata_size, size_t* write_size) {
     uint32_t hist[256];
     char* codes[256];
     huffman_header_t header;
@@ -403,6 +405,10 @@ uint8_t* huffman_decompress(uint8_t* cdata, size_t* write_size) {
     huffman_rec_hist(&header, cdata, hist);
     printf("Header on decompress\n");
     huffman_print_header_info(&header);
+
+    if (header.orig_size > (4 * cdata_size))
+        utils_fatal_error("huffman_decompress() failed - unreal");
+
     huffman_node_t** nodes_array = huffman_alloc_nodes_array(header.nodes_count);
     huffman_create_nodes(nodes_array, hist);
     huffman_node_t* root = huffman_build_tree(nodes_array, header.nodes_count);

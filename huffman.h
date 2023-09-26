@@ -31,5 +31,6 @@ typedef struct {
 } huffman_header_t;
 
 huffman_cdata_t* huffman_compress(uint8_t* data, size_t size);
-uint8_t* huffman_decompress(uint8_t* cdata, size_t* size);
+uint8_t* huffman_decompress(uint8_t* cdata, size_t cdata_size, size_t* write_size);
+
 #endif

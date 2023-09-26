@@ -73,13 +73,13 @@ void huffman_compress_file(const char* input_file, const char* output_file) {
 
 
 void huffman_decompress_file(const char* input_file, const char* output_file) {
-    size_t size = 0;
-    size_t orig_size = 0;
-    uint8_t* data = read_file(input_file, &size);
-    uint8_t* orig_data = huffman_decompress(data, &orig_size);
-    write_file(output_file, orig_data, orig_size);
-    printf("Original   size: %ld\n", orig_size);
-    printf("Compressed size: %ld\n", size);
+    size_t file_size = 0;
+    size_t size_after_decode = 0;
+    uint8_t* data = read_file(input_file, &file_size);
+    uint8_t* orig_data = huffman_decompress(data, file_size, &size_after_decode);
+    write_file(output_file, orig_data, size_after_decode);
+    printf("Original   size: %ld\n", size_after_decode);
+    printf("Compressed size: %ld\n", file_size);
     free(data);
     free(orig_data);
 }
