@@ -380,6 +380,7 @@ static uint8_t* huffman_decompress_data(huffman_header_t* header, huffman_node_t
     uint8_t* data = malloc(header->orig_size);
     if (data == NULL) utils_fatal_error("huffman_decompress_data() failed");
     uint32_t decoded = 0;
+    if (root == NULL) utils_fatal_error("huffman_decompress_data() failed");
     while (decoded < header->orig_size) {
         huffman_node_t* node = root;
         while (node != NULL && !is_leaf(node)) {
