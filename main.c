@@ -47,7 +47,7 @@ void write_file(const char *path, uint8_t* data, size_t size) {
     int fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
     if (fd < 0) utils_fatal_error("Could not open file for writing");
     ssize_t bytes_written = write(fd, data, size);
-    if (bytes_written < size) utils_fatal_error("Could not read write all content");
+    if (bytes_written < size) utils_fatal_error("Could not write all content");
     close(fd);
 }
 
